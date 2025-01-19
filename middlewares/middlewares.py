@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from typing import Any, Awaitable, Callable, Dict
 
 from database import UserBase
-from lexicon.lexicon import lexicon
+from lexicon import lexicon
 
 
 class DbSessionMiddleware(BaseMiddleware):
@@ -36,7 +36,11 @@ class GetLangMiddleware(BaseMiddleware):
                        data: Dict[str, Any]) -> Any:
         async with self.session_pool() as session:
             query = select(UserBase.lang).where(UserBase.user_id == event.event.from_user.id)
-            data["lang"] = await session.scalar(query)
+            lang = await session.scalar(query)
+            if lang is not None:
+                data["lang"] = await session.scalar(query)
+            else:
+                data["lang"] = event.event.from_user.language_code
         return await handler(event, data)
 
 

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from aiogram_dialog import setup_dialogs
 
 from config_data import config
-from handlers import commands_router, admin_router, messages_router, dialog
+from handlers import commands_router, messages_router, registration_dialog, language_dialog
 from keyboards import set_commands_menu
 from middlewares import MessageThrottlingMiddleware, DbSessionMiddleware, GetLangMiddleware
 from database import Base
@@ -43,10 +43,10 @@ async def main() -> None:
     dp.message.middleware(MessageThrottlingMiddleware(storage=middleware_storage))
     dp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    dp.include_router(admin_router)
     dp.include_router(commands_router)
     dp.include_router(messages_router)
-    dp.include_router(dialog)
+    dp.include_router(registration_dialog)
+    dp.include_router(language_dialog)
 
     setup_dialogs(dp)
 

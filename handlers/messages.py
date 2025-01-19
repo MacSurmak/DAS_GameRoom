@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import UserBase
 from filters import IsRegistered
-from lexicon.lexicon import lexicon
 
 messages_router: Router = Router(name='messages-router')
 
