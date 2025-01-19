@@ -43,9 +43,9 @@ async def main() -> None:
     dp.message.middleware(MessageThrottlingMiddleware(storage=middleware_storage))
     dp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    # dp.include_router(admin_router)
-    # dp.include_router(commands_router)
-    # dp.include_router(messages_router)
+    dp.include_router(admin_router)
+    dp.include_router(commands_router)
+    dp.include_router(messages_router)
     dp.include_router(dialog)
 
     setup_dialogs(dp)

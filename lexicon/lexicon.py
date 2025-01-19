@@ -2,13 +2,19 @@ LEXICON: dict[str, dict[str, str]] = {
     'ru': {
         # Commands messages
         '/start': 'Привет!',
-        '/help': 'Помощь'
+        '/help': 'Помощь',
+
+        'throttling-warning': 'Обнаружена подозрительная активность! '
+                              'Подожди 10 секунд прежде, чем писать снова.'
     },
 
     'en': {
         # Commands messages
         '/start': 'Hello!',
-        '/help': 'Help'
+        '/help': 'Help',
+
+        'throttling-warning': 'Suspicious activity detected! '
+                              'Wait 10 seconds before writing again.'
     },
 }
 
