@@ -1,0 +1,4 @@
+aiogram~=3.17.0
+SQLAlchemy~=2.0.37
+loguru~=0.7.3
+environs~=14.1.0

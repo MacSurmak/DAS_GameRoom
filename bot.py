@@ -34,10 +34,10 @@ async def main() -> None:
         await conn.run_sync(Base.metadata.create_all)
     session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
-    dp.message.middleware(MessageThrottlingMiddleware(storage=middleware_storage))
     dp.update.middleware(DbSessionMiddleware(session_pool=session_maker))
-    dp.callback_query.middleware(CallbackAnswerMiddleware())
     dp.update.middleware(GetLangMiddleware(session_pool=session_maker))
+    dp.message.middleware(MessageThrottlingMiddleware(storage=middleware_storage))
+    dp.callback_query.middleware(CallbackAnswerMiddleware())
 
     dp.include_router(admin_router)
     dp.include_router(commands_router)
