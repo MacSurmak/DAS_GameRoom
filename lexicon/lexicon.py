@@ -4,18 +4,20 @@ from aiogram_dialog.widgets.text import Format
 LEXICON: dict[str, dict[str, str]] = {
     'ru': {
         # Commands messages
-        'start': 'Привет!',
+        'start': 'Привет! Для начала давай познакомимся.',
         'start-registered': 'Снова привет, {name}!',
-        'help': 'Помощь',
+        'help': '* Здесь должна быть справка *',
 
         # Registration
         'get_lang': 'Выбери свой язык:',
-        'get_name': 'Пожалуйста, введи своё имя:',
+        'get_name': 'Пожалуйста, введи свои ФИО (например, Иванов Иван Иванович):',
+        'get_year': 'На каком курсе ты учишься?',
+        'get_room': 'Введи номер своей комнаты:',
+        'name_confirmation': '{dialog_data[last_name]} {dialog_data[first_name]} {dialog_data[middle_name]}, верно?',
 
         # Buttons
-        'start_registration': 'Зарегистрироваться',
+        'start_registration': 'Познакомиться',
         'select_language': 'Выбрать язык',
-
 
         # Service
         'throttling-warning': 'Обнаружена подозрительная активность! '
@@ -23,60 +25,15 @@ LEXICON: dict[str, dict[str, str]] = {
     },
 
     'en': {
-        # Commands messages
-        'start': 'Hello!',
-        'start-registered': 'Hello again, {name}!',
-        'help': 'Help',
 
-        # Registration
-        'get_lang': 'Select your language:',
-        'get_name': 'Please, enter your name:',
-
-        # Buttons
-        'start_registration': 'Register',
-        'select_language': 'Select language',
-
-        # Service
-        'throttling-warning': 'Suspicious activity detected! '
-                              'Wait 10 seconds before writing again.'
     },
 
     'de': {
-        # Commands messages
-        'start': 'Hallo!',
-        'start-registered': 'Hallo wieder, {name}!',
-        'help': 'Hilfe',
 
-        # Registration
-        'get_lang': 'Wähle deine Sprache:',
-        'get_name': 'Bitte gib deinen Namen ein:',
-
-        # Buttons
-        'start_registration': 'Registrieren',
-        'select_language': 'Sprache auswählen',
-
-        # Service
-        'throttling-warning': 'Verdächtige Aktivität erkannt! '
-                              'Warte 10 Sekunden, bevor du wieder schreibst.'
     },
 
     'es': {
-        # Commands messages
-        'start': '¡Hola!',
-        'start-registered': '¡Hola de nuevo, {name}!',
-        'help': 'Ayuda',
 
-        # Registration
-        'get_lang': 'Selecciona tu idioma:',
-        'get_name': 'Por favor, introduce tu nombre:',
-
-        # Buttons
-        'start_registration': 'Registrarse',
-        'select_language': 'Seleccionar idioma',
-
-        # Service
-        'throttling-warning': '¡Actividad sospechosa detectada! '
-                              'Espera 10 segundos antes de volver a escribir.'
     },
 
 }
@@ -95,7 +52,8 @@ LANGUAGES = [
 ]
 
 def lexicon(lang: str, key: str) -> str:
-    return LEXICON[f'{lang}'][key]
+    # return LEXICON[f'{lang}'][key]
+    return LEXICON['ru'][key]
 
 
 class LocalizedTextFormat(Format):

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import UserBase
 from filters import IsRegistered
-from handlers.states import RegistrationSG
+from handlers.dialog import RegistrationSG
 from lexicon import lexicon
 
 commands_router: Router = Router(name='commands-router')

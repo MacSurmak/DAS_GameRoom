@@ -3,7 +3,6 @@ from aiogram_dialog.widgets.kbd import Button, ManagedListGroup
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import UserBase
-from handlers.states import RegistrationSG
 
 
 async def save_lang(callback: CallbackQuery, button: Button, manager: ManagedListGroup, session: AsyncSession):
@@ -15,5 +14,7 @@ async def save_lang(callback: CallbackQuery, button: Button, manager: ManagedLis
     )
     await session.merge(user)
     await session.commit()
+
     manager.middleware_data["lang"] = item_id
+
     await manager.done()

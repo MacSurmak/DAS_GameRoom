@@ -44,7 +44,6 @@ async def main() -> None:
     dp.callback_query.middleware(CallbackAnswerMiddleware())
 
     dp.include_router(commands_router)
-    dp.include_router(messages_router)
     dp.include_router(registration_dialog)
     dp.include_router(language_dialog)
 
