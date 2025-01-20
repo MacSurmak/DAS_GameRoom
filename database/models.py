@@ -19,6 +19,7 @@ class UserBase(Base):
     last_name: Mapped[str] = mapped_column(String(), nullable=True)
     course: Mapped[int] = mapped_column(Integer(), nullable=True)
     room: Mapped[int] = mapped_column(Integer(), nullable=True)
+    registered: Mapped[bool] = mapped_column(Boolean(), server_default=text("FALSE"))
     lang: Mapped[str] = mapped_column(String())
     admin: Mapped[bool] = mapped_column(Boolean(), server_default=text("FALSE"))
 
@@ -31,6 +32,7 @@ class UserBase(Base):
                 f"last_name={self.last_name!r}, "
                 f"course={self.course!r}, "
                 f"room={self.room!r}, "
+                f"registered={self.registered!r}, "
                 f"lang={self.lang!r}, "
                 f"admin={self.admin!r})")
 

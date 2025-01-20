@@ -14,11 +14,11 @@ class IsRegistered(BaseFilter):
         else:
             user_id = event.message.chat.id
 
-        state = False
-        query = select(UserBase).where(UserBase.user_id == user_id)
-        if await session.scalar(query):
-            state = True
-        return state
+        user = await session.get(UserBase, user_id)
+        if user:
+            if user.registered:
+                return True
+        return False
 
 
 class IsAdmin(BaseFilter):
@@ -29,8 +29,7 @@ class IsAdmin(BaseFilter):
         else:
             user_id = event.message.chat.id
 
-        state = False
-        query = select(UserBase.admin).where(UserBase.user_id == user_id)
-        if await session.scalar(query):
-            state = True
-        return state
+        user = await session.get(UserBase, user_id)
+        if user.admin:
+            return True
+        return False
