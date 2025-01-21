@@ -24,7 +24,7 @@ async def start_unregistered(message: Message, session: AsyncSession, dialog_man
     user = UserBase(
         user_id=message.from_user.id,
         username=message.from_user.username,
-        lang=message.from_user.language_code
+        lang=lang
     )
     await session.merge(user)
     await session.commit()

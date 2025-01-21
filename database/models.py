@@ -17,7 +17,8 @@ class UserBase(Base):
     first_name: Mapped[str] = mapped_column(String(), nullable=True)
     middle_name: Mapped[str] = mapped_column(String(), nullable=True)
     last_name: Mapped[str] = mapped_column(String(), nullable=True)
-    course: Mapped[int] = mapped_column(Integer(), nullable=True)
+    grade: Mapped[str] = mapped_column(String(), nullable=True)
+    year: Mapped[int] = mapped_column(Integer(), nullable=True)
     room: Mapped[int] = mapped_column(Integer(), nullable=True)
     registered: Mapped[bool] = mapped_column(Boolean(), server_default=text("FALSE"))
     lang: Mapped[str] = mapped_column(String())
@@ -30,7 +31,8 @@ class UserBase(Base):
                 f"first_name={self.first_name!r}, "
                 f"middle_name={self.middle_name!r}, "
                 f"last_name={self.last_name!r}, "
-                f"course={self.course!r}, "
+                f"grade={self.grade!r}, "
+                f"year={self.year!r}, "
                 f"room={self.room!r}, "
                 f"registered={self.registered!r}, "
                 f"lang={self.lang!r}, "
