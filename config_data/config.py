@@ -17,10 +17,13 @@ class TgBot:
 
 @dataclass
 class RedisConfig:
+    """Redis configuration."""
     host: str
     port: int
     user: str
     password: str
+    bot_database: int
+    middleware_database: int
 
 
 @dataclass
@@ -49,4 +52,6 @@ def load_config(path: str | None) -> Config:
                   redis=RedisConfig(host=env('REDIS_HOST'),
                                     port=env('REDIS_PORT'),
                                     user=env('REDIS_USER'),
-                                    password=env('REDIS_PASSWORD')))
+                                    password=env('REDIS_PASSWORD'),
+                                    bot_database=int(env('REDIS_BOT_DATABASE')),
+                                    middleware_database=int(env('REDIS_MIDDLEWARE_DATABASE'))))

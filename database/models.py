@@ -1,65 +1,102 @@
-from datetime import datetime
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy import String, Integer, DateTime, TIMESTAMP, func, Boolean, BigInteger
-from sqlalchemy import ForeignKey, text
+from decimal import Decimal
 
-from .base import Base
+from sqlalchemy import Column, Integer, BigInteger, String, DateTime, Date, DECIMAL, BOOLEAN, TEXT, ForeignKey, \
+    Identity, Time, Enum, UniqueConstraint
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.sql import func
 
-class UserBase(Base):
-    __tablename__ = 'Users'
+from .base import Base  # Import Base from the separate base.py file
 
-    user_id: Mapped[int] = mapped_column(BigInteger(), primary_key=True)
-    username: Mapped[str] = mapped_column(String())
-    registration_time: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), server_default=text("NOW()")
+class User(Base):
+    __tablename__ = 'users'
+
+    user_id = Column(Integer, Identity(), primary_key=True)
+    telegram_id = Column(BigInteger, unique=True, nullable=False)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    middle_name = Column(String(255))
+    room_number = Column(String(255))
+    year = Column(Integer)
+    grade = Column(Enum('bachelor', 'master', 'specialist', name='grade_type'), nullable=True)  # Use Enum, and it can be nullable
+    lang = Column(String(255))
+    is_admin = Column(BOOLEAN, default=False)
+
+    def __repr__(self):
+        return (f"<User(user_id={self.user_id}, telegram_id={self.telegram_id}, "
+                f"first_name={self.first_name}, is_admin={self.is_admin})>")
+
+
+class Resource(Base):
+    __tablename__ = 'resources'
+
+    resource_id = Column(Integer, Identity(), primary_key=True)
+    resource_name = Column(String(255), nullable=False)
+    description = Column(TEXT) # Optional description
+
+    def __repr__(self):
+        return f"<Resource(resource_id={self.resource_id}, resource_name={self.resource_name})>"
+
+class ScheduleSlot(Base):
+    """Represents a *recurring* time slot in the schedule."""
+    __tablename__ = 'schedule_slots'
+
+    slot_id = Column(Integer, Identity(), primary_key=True)
+    resource_id = Column(Integer, ForeignKey('resources.resource_id'), nullable=False)
+    day_of_week = Column(Integer, nullable=False)  # 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    is_active = Column(BOOLEAN, default=True) # Added, to deactivate slots without deleting
+
+    resource = relationship("Resource", backref="schedule_slots")
+
+    def __repr__(self):
+      return (f"<ScheduleSlot(slot_id={self.slot_id}, resource_id={self.resource_id}, "
+                f"day_of_week={self.day_of_week}, start_time={self.start_time}, "
+                f"end_time={self.end_time})>")
+
+
+class ScheduleOverride(Base):
+    """Represents a one-time *exception* to the regular schedule."""
+    __tablename__ = 'schedule_overrides'
+
+    override_id = Column(Integer, Identity(), primary_key=True)
+    resource_id = Column(Integer, ForeignKey('resources.resource_id'), nullable=False)
+    date = Column(Date, nullable=False)  # The specific date of the override
+    start_time = Column(Time, nullable=True)  # Start time of the override (can be different from slot)
+    end_time = Column(Time, nullable=True)    # End time of the override (can be different from slot)
+    is_available = Column(BOOLEAN, nullable=False)  # True = Available, False = Unavailable (blocked)
+    reason = Column(TEXT) # Optional reason for the override
+
+    resource = relationship("Resource", backref="schedule_overrides")
+    __table_args__ = (
+        UniqueConstraint('resource_id', 'date', 'start_time', name='unique_override'),
     )
-    first_name: Mapped[str] = mapped_column(String(), nullable=True)
-    middle_name: Mapped[str] = mapped_column(String(), nullable=True)
-    last_name: Mapped[str] = mapped_column(String(), nullable=True)
-    grade: Mapped[str] = mapped_column(String(), nullable=True)
-    year: Mapped[int] = mapped_column(Integer(), nullable=True)
-    room: Mapped[int] = mapped_column(Integer(), nullable=True)
-    registered: Mapped[bool] = mapped_column(Boolean(), server_default=text("FALSE"))
-    lang: Mapped[str] = mapped_column(String())
-    admin: Mapped[bool] = mapped_column(Boolean(), server_default=text("FALSE"))
-
-    def __repr__(self) -> str:
-        return (f"User(user_id={self.user_id!r}, "
-                f"username={self.username!r}, "
-                f"registration_time={self.registration_time!r}"
-                f"first_name={self.first_name!r}, "
-                f"middle_name={self.middle_name!r}, "
-                f"last_name={self.last_name!r}, "
-                f"grade={self.grade!r}, "
-                f"year={self.year!r}, "
-                f"room={self.room!r}, "
-                f"registered={self.registered!r}, "
-                f"lang={self.lang!r}, "
-                f"admin={self.admin!r})")
-
-
-class ResourceBase(Base):
-    __tablename__ = 'Resources'
-
-    resource_id: Mapped[int] = mapped_column(primary_key=True)
-    resource_name: Mapped[str] = mapped_column(String())
 
     def __repr__(self):
-        return (f"User(resource_id={self.resource_id!r}, "
-                f"name={self.resource_name!r}")
+      return (f"<ScheduleOverride(override_id={self.override_id}, resource_id={self.resource_id}, "
+              f"date={self.date}, start_time={self.start_time}, end_time={self.end_time}, "
+              f"is_available={self.is_available})>")
 
+class Booking(Base):
+    __tablename__ = 'bookings'
 
-class BookingBase(Base):
-    __tablename__ = 'Bookings'
+    booking_id = Column(Integer, Identity(), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    resource_id = Column(Integer, ForeignKey('resources.resource_id'), nullable=False)
+    slot_id = Column(Integer, ForeignKey('schedule_slots.slot_id'), nullable=True)  # Link to ScheduleSlot (optional, but helpful for reporting)
+    override_id = Column(Integer, ForeignKey('schedule_overrides.override_id'), nullable=True) # Link to override, if applicable
+    booking_date = Column(Date, nullable=False)  # Date of the booking
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    request_time = Column(DateTime(timezone=True), server_default=func.now()) # Timestamp when booking made.
+    status = Column(Enum('pending', 'confirmed', 'rejected', 'cancelled', name='booking_status'), default='pending')
 
-    booking_id: Mapped[int] = mapped_column(primary_key=True)
-    booking_user_id: Mapped[int] = mapped_column(ForeignKey("Users.user_id"))
-    booking_resource_id: Mapped[int] = mapped_column(ForeignKey("Resources.resource_id"))
-    booking_time: Mapped[datetime] = mapped_column(DateTime())
+    user = relationship("User", backref="bookings")
+    resource = relationship("Resource", backref="bookings")
+    slot = relationship("ScheduleSlot", backref="bookings")
+    override = relationship("ScheduleOverride", backref="bookings")
 
     def __repr__(self):
-        return (f"User(booking_id={self.booking_id!r}, "
-                f"user_id={self.booking_user_id!r}, "
-                f"resource_id={self.booking_resource_id!r}, "
-                f"booking_time={self.booking_time!r}")
+      return (f"<Booking(booking_id={self.booking_id}, user_id={self.user_id}, "
+              f"resource_id={self.resource_id}, booking_date={self.booking_date}, "
+              f"start_time={self.start_time}, end_time={self.end_time}, status={self.status})>")

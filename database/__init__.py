@@ -1,9 +1,10 @@
 from .base import Base
-from .models import UserBase, ResourceBase, BookingBase
+from .models import User, Resource, ScheduleSlot, ScheduleOverride, Booking
 
 __all__ = [
     "Base",
-    "UserBase",
-    "ResourceBase",
-    "BookingBase"
+    "User",
+    "ScheduleOverride",
+    "ScheduleSlot",
+    "Booking"
 ]

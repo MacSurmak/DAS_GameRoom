@@ -1,12 +1,10 @@
 from .messages import messages_router
 from .commands import commands_router
-from .dialog import registration_dialog, language_dialog, LangSG, RegistrationSG
+from dialogs.registration_dialog import registration_dialog, RegistrationSG
 
 __all__ = [
     "messages_router",
     "commands_router",
     "registration_dialog",
-    "language_dialog",
-    "LangSG",
     "RegistrationSG"
 ]

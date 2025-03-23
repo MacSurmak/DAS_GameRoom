@@ -1,0 +1,7 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mash_bot
+    restart: always  # Перезапускаем при сбоях
