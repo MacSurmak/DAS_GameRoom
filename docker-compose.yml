@@ -3,5 +3,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mash_bot
+    container_name: das_bot
     restart: always  # Перезапускаем при сбоях
